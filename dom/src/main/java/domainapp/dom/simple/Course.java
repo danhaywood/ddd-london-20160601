@@ -18,10 +18,18 @@
  */
 package domainapp.dom.simple;
 
+import java.util.SortedSet;
+import java.util.TreeSet;
+
+import javax.inject.Inject;
 import javax.jdo.annotations.IdentityType;
+import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.VersionStrategy;
 
+import org.joda.time.LocalDate;
+
 import org.apache.isis.applib.annotation.Action;
+import org.apache.isis.applib.annotation.Collection;
 import org.apache.isis.applib.annotation.CommandReification;
 import org.apache.isis.applib.annotation.DomainObject;
 import org.apache.isis.applib.annotation.MemberOrder;
@@ -29,6 +37,7 @@ import org.apache.isis.applib.annotation.ParameterLayout;
 import org.apache.isis.applib.annotation.Property;
 import org.apache.isis.applib.annotation.Publishing;
 import org.apache.isis.applib.annotation.SemanticsOf;
+import org.apache.isis.applib.services.clock.ClockService;
 import org.apache.isis.applib.services.eventbus.ActionDomainEvent;
 import org.apache.isis.applib.services.eventbus.PropertyDomainEvent;
 import org.apache.isis.applib.services.i18n.TranslatableString;
@@ -54,29 +63,64 @@ import lombok.Setter;
         @javax.jdo.annotations.Query(
                 name = "find", language = "JDOQL",
                 value = "SELECT "
-                        + "FROM domainapp.dom.simple.SimpleObject "),
+                        + "FROM domainapp.dom.simple.Course "),
         @javax.jdo.annotations.Query(
                 name = "findByName", language = "JDOQL",
                 value = "SELECT "
-                        + "FROM domainapp.dom.simple.SimpleObject "
+                        + "FROM domainapp.dom.simple.Course "
                         + "WHERE name.indexOf(:name) >= 0 ")
 })
 @javax.jdo.annotations.Unique(name="SimpleObject_name_UNQ", members = {"name"})
 @DomainObject(
         publishing = Publishing.ENABLED
 )
-public class SimpleObject implements Comparable<SimpleObject> {
+public class Course implements Comparable<Course> {
 
     public static final int NAME_LENGTH = 40;
 
+    @Persistent(mappedBy = "course", dependentElement = "true")
+    @Collection()
+    @Getter @Setter
+    private SortedSet<Session> sessions = new TreeSet<Session>();
 
     public TranslatableString title() {
         return TranslatableString.tr("Object: {name}", "name", getName());
     }
 
+    @Action(
+            semantics = SemanticsOf.NON_IDEMPOTENT
+    )
+    public Session schedule(
+            @ParameterLayout(named = "Session date")
+            final LocalDate sessionDate,
+            @ParameterLayout(named = "Are you sure?")
+            final boolean areYouSure) {
 
+        Session session = new Session();
+        session.setSessionDate(sessionDate);
+        getSessions().add(session);
 
-    public static class NameDomainEvent extends PropertyDomainEvent<SimpleObject,String> {}
+        return session;
+    }
+
+    public String validateSchedule(
+            final LocalDate sessionDate,
+            final boolean areYouSure) {
+        if(areYouSure) {
+            return null;
+        }
+
+        LocalDate now = clockService.now();
+        if(now.compareTo(sessionDate) >= 0) {
+            return "Can't schedule in the past";
+        }
+        return null;
+    }
+
+    @Inject
+    ClockService clockService;
+
+    public static class NameDomainEvent extends PropertyDomainEvent<Course,String> {}
     @javax.jdo.annotations.Column(
             allowsNull="false",
             length = NAME_LENGTH
@@ -95,7 +139,7 @@ public class SimpleObject implements Comparable<SimpleObject> {
 
 
 
-    public static class UpdateNameDomainEvent extends ActionDomainEvent<SimpleObject> {}
+    public static class UpdateNameDomainEvent extends ActionDomainEvent<Course> {}
     @Action(
             command = CommandReification.ENABLED,
             publishing = Publishing.ENABLED,
@@ -103,7 +147,7 @@ public class SimpleObject implements Comparable<SimpleObject> {
             domainEvent = UpdateNameDomainEvent.class
     )
     @MemberOrder(name="name", sequence = "1") // associate with 'name' property
-    public SimpleObject updateName(@ParameterLayout(named="Name") final String name) {
+    public Course updateName(@ParameterLayout(named="Name") final String name) {
         setName(name);
         return this;
     }
@@ -117,7 +161,7 @@ public class SimpleObject implements Comparable<SimpleObject> {
 
 
 
-    public static class DeleteDomainEvent extends ActionDomainEvent<SimpleObject> {}
+    public static class DeleteDomainEvent extends ActionDomainEvent<Course> {}
     @Action(
             domainEvent = DeleteDomainEvent.class,
             semantics = SemanticsOf.NON_IDEMPOTENT_ARE_YOU_SURE
@@ -129,7 +173,7 @@ public class SimpleObject implements Comparable<SimpleObject> {
 
 
     @Override
-    public int compareTo(final SimpleObject other) {
+    public int compareTo(final Course other) {
         return ObjectContracts.compare(this, other, "name");
     }
 

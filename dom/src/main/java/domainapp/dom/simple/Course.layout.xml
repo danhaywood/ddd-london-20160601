@@ -32,6 +32,7 @@
                         <bs3:col span="12">
                             <c:fieldSet name="Name">
                                 <c:action id="delete"/>
+                                <c:action id="schedule"/>
                                 <c:property id="name" namedEscaped="true"/>
                             </c:fieldSet>
                         </bs3:col>
@@ -57,6 +58,14 @@
         </bs3:col>
         <bs3:col span="6">
             <bs3:tabGroup  unreferencedCollections="true">
+                <bs3:tab name="Sessions">
+                    <bs3:row>
+                        <bs3:col span="12">
+                            <c:collection id="session">
+                            </c:collection>
+                        </bs3:col>
+                    </bs3:row>
+                </bs3:tab>
             </bs3:tabGroup>
         </bs3:col>
     </bs3:row>

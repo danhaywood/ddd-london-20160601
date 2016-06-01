@@ -21,8 +21,8 @@ package domainapp.fixture.dom.simple;
 
 import org.apache.isis.applib.fixturescripts.FixtureScript;
 
-import domainapp.dom.simple.SimpleObject;
-import domainapp.dom.simple.SimpleObjects;
+import domainapp.dom.simple.Course;
+import domainapp.dom.simple.Courses;
 
 public class SimpleObjectCreate extends FixtureScript {
 
@@ -43,14 +43,14 @@ public class SimpleObjectCreate extends FixtureScript {
 
 
     //region > simpleObject (output)
-    private SimpleObject simpleObject;
+    private Course course;
 
     /**
      * The created simple object (output).
      * @return
      */
-    public SimpleObject getSimpleObject() {
-        return simpleObject;
+    public Course getCourse() {
+        return course;
     }
     //endregion
 
@@ -59,13 +59,13 @@ public class SimpleObjectCreate extends FixtureScript {
 
         String name = checkParam("name", ec, String.class);
 
-        this.simpleObject = wrap(simpleObjects).create(name);
+        this.course = wrap(courses).create(name);
 
         // also make available to UI
-        ec.addResult(this, simpleObject);
+        ec.addResult(this, course);
     }
 
     @javax.inject.Inject
-    private SimpleObjects simpleObjects;
+    private Courses courses;
 
 }

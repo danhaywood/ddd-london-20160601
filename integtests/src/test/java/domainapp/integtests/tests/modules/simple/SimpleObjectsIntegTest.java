@@ -33,10 +33,10 @@ import org.junit.Test;
 import org.apache.isis.applib.fixturescripts.FixtureScript;
 import org.apache.isis.applib.fixturescripts.FixtureScripts;
 
-import domainapp.dom.simple.SimpleObject;
-import domainapp.dom.simple.SimpleObjects;
+import domainapp.dom.simple.Course;
+import domainapp.dom.simple.Courses;
 import domainapp.fixture.dom.simple.SimpleObjectsTearDown;
-import domainapp.fixture.scenarios.RecreateSimpleObjects;
+import domainapp.fixture.scenarios.RecreateCourses;
 import domainapp.integtests.tests.DomainAppIntegTest;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -45,7 +45,7 @@ public class SimpleObjectsIntegTest extends DomainAppIntegTest {
     @Inject
     FixtureScripts fixtureScripts;
     @Inject
-    SimpleObjects simpleObjects;
+    Courses courses;
 
     public static class ListAll extends SimpleObjectsIntegTest {
 
@@ -53,18 +53,18 @@ public class SimpleObjectsIntegTest extends DomainAppIntegTest {
         public void happyCase() throws Exception {
 
             // given
-            RecreateSimpleObjects fs = new RecreateSimpleObjects();
+            RecreateCourses fs = new RecreateCourses();
             fixtureScripts.runFixtureScript(fs, null);
             nextTransaction();
 
             // when
-            final List<SimpleObject> all = wrap(simpleObjects).listAll();
+            final List<Course> all = wrap(courses).listAll();
 
             // then
-            assertThat(all).hasSize(fs.getSimpleObjects().size());
+            assertThat(all).hasSize(fs.getCourses().size());
 
-            SimpleObject simpleObject = wrap(all.get(0));
-            assertThat(simpleObject.getName()).isEqualTo(fs.getSimpleObjects().get(0).getName());
+            Course course = wrap(all.get(0));
+            assertThat(course.getName()).isEqualTo(fs.getCourses().get(0).getName());
         }
 
         @Test
@@ -76,7 +76,7 @@ public class SimpleObjectsIntegTest extends DomainAppIntegTest {
             nextTransaction();
 
             // when
-            final List<SimpleObject> all = wrap(simpleObjects).listAll();
+            final List<Course> all = wrap(courses).listAll();
 
             // then
             assertThat(all).hasSize(0);
@@ -94,10 +94,10 @@ public class SimpleObjectsIntegTest extends DomainAppIntegTest {
             nextTransaction();
 
             // when
-            wrap(simpleObjects).create("Faz");
+            wrap(courses).create("Faz");
 
             // then
-            final List<SimpleObject> all = wrap(simpleObjects).listAll();
+            final List<Course> all = wrap(courses).listAll();
             assertThat(all).hasSize(1);
         }
 
@@ -108,14 +108,14 @@ public class SimpleObjectsIntegTest extends DomainAppIntegTest {
             FixtureScript fs = new SimpleObjectsTearDown();
             fixtureScripts.runFixtureScript(fs, null);
             nextTransaction();
-            wrap(simpleObjects).create("Faz");
+            wrap(courses).create("Faz");
             nextTransaction();
 
             // then
             expectedExceptions.expectCause(causalChainContains(SQLIntegrityConstraintViolationException.class));
 
             // when
-            wrap(simpleObjects).create("Faz");
+            wrap(courses).create("Faz");
             nextTransaction();
         }
 

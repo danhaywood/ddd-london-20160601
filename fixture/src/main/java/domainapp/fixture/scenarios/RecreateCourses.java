@@ -27,16 +27,16 @@ import com.google.common.collect.Lists;
 
 import org.apache.isis.applib.fixturescripts.FixtureScript;
 
-import domainapp.dom.simple.SimpleObject;
+import domainapp.dom.simple.Course;
 import domainapp.fixture.dom.simple.SimpleObjectCreate;
 import domainapp.fixture.dom.simple.SimpleObjectsTearDown;
 
-public class RecreateSimpleObjects extends FixtureScript {
+public class RecreateCourses extends FixtureScript {
 
     public final List<String> NAMES = Collections.unmodifiableList(Arrays.asList(
-            "Foo", "Bar", "Baz", "Frodo", "Froyo", "Fizz", "Bip", "Bop", "Bang", "Boo"));
+            "Java for Beginners", "Ruby for Beginners", "Advanced Ruby on Rails", "CQRS for Dummies"));
 
-    public RecreateSimpleObjects() {
+    public RecreateCourses() {
         withDiscoverability(Discoverability.DISCOVERABLE);
     }
 
@@ -50,20 +50,20 @@ public class RecreateSimpleObjects extends FixtureScript {
         return number;
     }
 
-    public RecreateSimpleObjects setNumber(final Integer number) {
+    public RecreateCourses setNumber(final Integer number) {
         this.number = number;
         return this;
     }
     //endregion
 
     //region > simpleObjects (output)
-    private final List<SimpleObject> simpleObjects = Lists.newArrayList();
+    private final List<Course> courses = Lists.newArrayList();
 
     /**
      * The simpleobjects created by this fixture (output).
      */
-    public List<SimpleObject> getSimpleObjects() {
-        return simpleObjects;
+    public List<Course> getCourses() {
+        return courses;
     }
     //endregion
 
@@ -86,7 +86,7 @@ public class RecreateSimpleObjects extends FixtureScript {
         for (int i = 0; i < number; i++) {
             final SimpleObjectCreate fs = new SimpleObjectCreate().setName(NAMES.get(i));
             ec.executeChild(this, fs.getName(), fs);
-            simpleObjects.add(fs.getSimpleObject());
+            courses.add(fs.getCourse());
         }
     }
 }

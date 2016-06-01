@@ -36,12 +36,12 @@ import org.apache.isis.applib.services.repository.RepositoryService;
 
 @DomainService(
         nature = NatureOfService.VIEW,
-        repositoryFor = SimpleObject.class
+        repositoryFor = Course.class
 )
 @DomainServiceLayout(
         menuOrder = "10"
 )
-public class SimpleObjects {
+public class Courses {
 
     //region > title
     public TranslatableString title() {
@@ -50,7 +50,7 @@ public class SimpleObjects {
     //endregion
 
     //region > listAll (action)
-    public static class ListAllEvent extends ActionDomainEvent<SimpleObjects> {}
+    public static class ListAllEvent extends ActionDomainEvent<Courses> {}
     @Action(
             semantics = SemanticsOf.SAFE,
             domainEvent = ListAllEvent.class
@@ -59,13 +59,13 @@ public class SimpleObjects {
             bookmarking = BookmarkPolicy.AS_ROOT
     )
     @MemberOrder(sequence = "1")
-    public List<SimpleObject> listAll() {
-        return repositoryService.allInstances(SimpleObject.class);
+    public List<Course> listAll() {
+        return repositoryService.allInstances(Course.class);
     }
     //endregion
 
     //region > findByName (action)
-    public static class FindByNameEvent extends ActionDomainEvent<SimpleObjects> {}
+    public static class FindByNameEvent extends ActionDomainEvent<Courses> {}
     @Action(
             semantics = SemanticsOf.SAFE,
             domainEvent = FindByNameEvent.class
@@ -74,28 +74,28 @@ public class SimpleObjects {
             bookmarking = BookmarkPolicy.AS_ROOT
     )
     @MemberOrder(sequence = "2")
-    public List<SimpleObject> findByName(
+    public List<Course> findByName(
             @ParameterLayout(named="Name")
             final String name
     ) {
         return repositoryService.allMatches(
                 new QueryDefault<>(
-                        SimpleObject.class,
+                        Course.class,
                         "findByName",
                         "name", name));
     }
     //endregion
 
     //region > create (action)
-    public static class CreateDomainEvent extends ActionDomainEvent<SimpleObjects> {}
+    public static class CreateDomainEvent extends ActionDomainEvent<Courses> {}
     @Action(
             domainEvent = CreateDomainEvent.class
     )
     @MemberOrder(sequence = "3")
-    public SimpleObject create(
+    public Course create(
             @ParameterLayout(named="Name")
             final String name) {
-        final SimpleObject obj = repositoryService.instantiate(SimpleObject.class);
+        final Course obj = repositoryService.instantiate(Course.class);
         obj.setName(name);
         repositoryService.persist(obj);
         return obj;

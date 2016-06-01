@@ -41,12 +41,12 @@ public class SimpleObjectsTest {
     @Mock
     RepositoryService mockRepositoryService;
     
-    SimpleObjects simpleObjects;
+    Courses courses;
 
     @Before
     public void setUp() throws Exception {
-        simpleObjects = new SimpleObjects();
-        simpleObjects.repositoryService = mockRepositoryService;
+        courses = new Courses();
+        courses.repositoryService = mockRepositoryService;
     }
 
     public static class Create extends SimpleObjectsTest {
@@ -55,25 +55,25 @@ public class SimpleObjectsTest {
         public void happyCase() throws Exception {
 
             // given
-            final SimpleObject simpleObject = new SimpleObject();
+            final Course course = new Course();
 
             final Sequence seq = context.sequence("create");
             context.checking(new Expectations() {
                 {
-                    oneOf(mockRepositoryService).instantiate(SimpleObject.class);
+                    oneOf(mockRepositoryService).instantiate(Course.class);
                     inSequence(seq);
-                    will(returnValue(simpleObject));
+                    will(returnValue(course));
 
-                    oneOf(mockRepositoryService).persist(simpleObject);
+                    oneOf(mockRepositoryService).persist(course);
                     inSequence(seq);
                 }
             });
 
             // when
-            final SimpleObject obj = simpleObjects.create("Foobar");
+            final Course obj = courses.create("Foobar");
 
             // then
-            assertThat(obj).isEqualTo(simpleObject);
+            assertThat(obj).isEqualTo(course);
             assertThat(obj.getName()).isEqualTo("Foobar");
         }
 
@@ -85,17 +85,17 @@ public class SimpleObjectsTest {
         public void happyCase() throws Exception {
 
             // given
-            final List<SimpleObject> all = Lists.newArrayList();
+            final List<Course> all = Lists.newArrayList();
 
             context.checking(new Expectations() {
                 {
-                    oneOf(mockRepositoryService).allInstances(SimpleObject.class);
+                    oneOf(mockRepositoryService).allInstances(Course.class);
                     will(returnValue(all));
                 }
             });
 
             // when
-            final List<SimpleObject> list = simpleObjects.listAll();
+            final List<Course> list = courses.listAll();
 
             // then
             assertThat(list).isEqualTo(all);

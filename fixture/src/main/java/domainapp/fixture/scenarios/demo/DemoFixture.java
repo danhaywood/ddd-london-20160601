@@ -30,7 +30,7 @@ import org.apache.isis.applib.fixturescripts.FixtureScript;
 
 import org.isisaddons.module.excel.dom.ExcelFixture;
 
-import domainapp.dom.simple.SimpleObject;
+import domainapp.dom.simple.Course;
 import domainapp.fixture.dom.simple.SimpleObjectsTearDown;
 import lombok.Getter;
 
@@ -44,7 +44,7 @@ public class DemoFixture extends FixtureScript {
      * The objects created by this fixture (output).
      */
     @Getter
-    private final List<SimpleObject> simpleObjects = Lists.newArrayList();
+    private final List<Course> courses = Lists.newArrayList();
 
 
     @Override
@@ -61,7 +61,7 @@ public class DemoFixture extends FixtureScript {
         // make objects created by ExcelFixture available to our caller.
         final Map<Class, List<Object>> objectsByClass = fs.getObjectsByClass();
 
-        getSimpleObjects().addAll((List)objectsByClass.get(DemoFixtureRowHandler.class));
+        getCourses().addAll((List)objectsByClass.get(DemoFixtureRowHandler.class));
     }
 
     private Class[] getHandlers() {

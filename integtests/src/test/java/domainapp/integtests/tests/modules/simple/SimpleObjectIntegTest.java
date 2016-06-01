@@ -31,8 +31,8 @@ import org.apache.isis.applib.services.wrapper.InvalidException;
 import org.apache.isis.core.metamodel.services.jdosupport.Persistable_datanucleusIdLong;
 import org.apache.isis.core.metamodel.services.jdosupport.Persistable_datanucleusVersionTimestamp;
 
-import domainapp.dom.simple.SimpleObject;
-import domainapp.fixture.scenarios.RecreateSimpleObjects;
+import domainapp.dom.simple.Course;
+import domainapp.fixture.scenarios.RecreateCourses;
 import domainapp.integtests.tests.DomainAppIntegTest;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -41,20 +41,20 @@ public class SimpleObjectIntegTest extends DomainAppIntegTest {
     @Inject
     FixtureScripts fixtureScripts;
 
-    RecreateSimpleObjects fs;
-    SimpleObject simpleObjectPojo;
-    SimpleObject simpleObjectWrapped;
+    RecreateCourses fs;
+    Course coursePojo;
+    Course courseWrapped;
 
     @Before
     public void setUp() throws Exception {
         // given
-        fs = new RecreateSimpleObjects().setNumber(1);
+        fs = new RecreateCourses().setNumber(1);
         fixtureScripts.runFixtureScript(fs, null);
 
-        simpleObjectPojo = fs.getSimpleObjects().get(0);
+        coursePojo = fs.getCourses().get(0);
 
-        assertThat(simpleObjectPojo).isNotNull();
-        simpleObjectWrapped = wrap(simpleObjectPojo);
+        assertThat(coursePojo).isNotNull();
+        courseWrapped = wrap(coursePojo);
     }
 
     public static class Name extends SimpleObjectIntegTest {
@@ -62,7 +62,7 @@ public class SimpleObjectIntegTest extends DomainAppIntegTest {
         @Test
         public void accessible() throws Exception {
             // when
-            final String name = simpleObjectWrapped.getName();
+            final String name = courseWrapped.getName();
             // then
             assertThat(name).isEqualTo(fs.NAMES.get(0));
         }
@@ -75,10 +75,10 @@ public class SimpleObjectIntegTest extends DomainAppIntegTest {
         public void canBeUpdatedDirectly() throws Exception {
 
             // when
-            simpleObjectWrapped.setName("new name");
+            courseWrapped.setName("new name");
 
             // then
-            assertThat(simpleObjectWrapped.getName()).isEqualTo("new name");
+            assertThat(courseWrapped.getName()).isEqualTo("new name");
         }
 
         @Test
@@ -89,7 +89,7 @@ public class SimpleObjectIntegTest extends DomainAppIntegTest {
             expectedExceptions.expectMessage("Exclamation mark is not allowed");
 
             // when
-            simpleObjectWrapped.setName("new name!");
+            courseWrapped.setName("new name!");
         }
     }
 
@@ -103,10 +103,10 @@ public class SimpleObjectIntegTest extends DomainAppIntegTest {
         public void interpolatesName() throws Exception {
 
             // given
-            final String name = simpleObjectWrapped.getName();
+            final String name = courseWrapped.getName();
 
             // when
-            final String title = container.titleOf(simpleObjectWrapped);
+            final String title = container.titleOf(courseWrapped);
 
             // then
             assertThat(title).isEqualTo("Object: " + name);
@@ -118,7 +118,7 @@ public class SimpleObjectIntegTest extends DomainAppIntegTest {
         @Test
         public void shouldBePopulated() throws Exception {
             // when
-            final Long id = mixin(Persistable_datanucleusIdLong.class, simpleObjectPojo).$$();
+            final Long id = mixin(Persistable_datanucleusIdLong.class, coursePojo).$$();
             // then
             assertThat(id).isGreaterThanOrEqualTo(0);
         }
@@ -129,7 +129,7 @@ public class SimpleObjectIntegTest extends DomainAppIntegTest {
         @Test
         public void shouldBePopulated() throws Exception {
             // when
-            final Timestamp timestamp = mixin(Persistable_datanucleusVersionTimestamp.class, simpleObjectPojo).$$();
+            final Timestamp timestamp = mixin(Persistable_datanucleusVersionTimestamp.class, coursePojo).$$();
             // then
             assertThat(timestamp).isNotNull();
         }
