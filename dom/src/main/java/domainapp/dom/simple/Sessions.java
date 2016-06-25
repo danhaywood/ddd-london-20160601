@@ -36,12 +36,12 @@ import org.apache.isis.applib.services.repository.RepositoryService;
 
 @DomainService(
         nature = NatureOfService.VIEW,
-        repositoryFor = SimpleObject.class
+        repositoryFor = Session.class
 )
 @DomainServiceLayout(
         menuOrder = "10"
 )
-public class SimpleObjects {
+public class Sessions {
 
     //region > title
     public TranslatableString title() {
@@ -50,7 +50,7 @@ public class SimpleObjects {
     //endregion
 
     //region > listAll (action)
-    public static class ListAllEvent extends ActionDomainEvent<SimpleObjects> {}
+    public static class ListAllEvent extends ActionDomainEvent<Sessions> {}
     @Action(
             semantics = SemanticsOf.SAFE,
             domainEvent = ListAllEvent.class
@@ -59,13 +59,13 @@ public class SimpleObjects {
             bookmarking = BookmarkPolicy.AS_ROOT
     )
     @MemberOrder(sequence = "1")
-    public List<SimpleObject> listAll() {
-        return repositoryService.allInstances(SimpleObject.class);
+    public List<Session> listAll() {
+        return repositoryService.allInstances(Session.class);
     }
     //endregion
 
     //region > findByName (action)
-    public static class FindByNameEvent extends ActionDomainEvent<SimpleObjects> {}
+    public static class FindByNameEvent extends ActionDomainEvent<Sessions> {}
     @Action(
             semantics = SemanticsOf.SAFE,
             domainEvent = FindByNameEvent.class
@@ -74,31 +74,37 @@ public class SimpleObjects {
             bookmarking = BookmarkPolicy.AS_ROOT
     )
     @MemberOrder(sequence = "2")
-    public List<SimpleObject> findByName(
+    public List<Session> findByName(
             @ParameterLayout(named="Name")
             final String name
     ) {
         return repositoryService.allMatches(
                 new QueryDefault<>(
-                        SimpleObject.class,
+                        Session.class,
                         "findByName",
                         "name", name));
     }
     //endregion
 
     //region > create (action)
-    public static class CreateDomainEvent extends ActionDomainEvent<SimpleObjects> {}
+    public static class CreateDomainEvent extends ActionDomainEvent<Sessions> {}
     @Action(
             domainEvent = CreateDomainEvent.class
     )
     @MemberOrder(sequence = "3")
-    public SimpleObject create(
-            @ParameterLayout(named="Name")
-            final String name) {
-        final SimpleObject obj = repositoryService.instantiate(SimpleObject.class);
-        obj.setName(name);
-        repositoryService.persist(obj);
-        return obj;
+    public Session create(
+            @ParameterLayout(named = "Name")
+            final String name,
+            final Presenter presenter) {
+        final Session session = repositoryService.instantiate(Session.class);
+        session.setName(name);
+        session.setState(Session.State.PROPOSED);
+
+        presenter.getSessions().add(session);
+        //session.setPresenter(presenter);
+
+        repositoryService.persist(session);
+        return session;
     }
 
     //endregion

@@ -41,12 +41,12 @@ public class SimpleObjectsTest {
     @Mock
     RepositoryService mockRepositoryService;
     
-    SimpleObjects simpleObjects;
+    Sessions sessions;
 
     @Before
     public void setUp() throws Exception {
-        simpleObjects = new SimpleObjects();
-        simpleObjects.repositoryService = mockRepositoryService;
+        sessions = new Sessions();
+        sessions.repositoryService = mockRepositoryService;
     }
 
     public static class Create extends SimpleObjectsTest {
@@ -55,25 +55,25 @@ public class SimpleObjectsTest {
         public void happyCase() throws Exception {
 
             // given
-            final SimpleObject simpleObject = new SimpleObject();
+            final Session session = new Session();
 
             final Sequence seq = context.sequence("create");
             context.checking(new Expectations() {
                 {
-                    oneOf(mockRepositoryService).instantiate(SimpleObject.class);
+                    oneOf(mockRepositoryService).instantiate(Session.class);
                     inSequence(seq);
-                    will(returnValue(simpleObject));
+                    will(returnValue(session));
 
-                    oneOf(mockRepositoryService).persist(simpleObject);
+                    oneOf(mockRepositoryService).persist(session);
                     inSequence(seq);
                 }
             });
 
             // when
-            final SimpleObject obj = simpleObjects.create("Foobar");
+            final Session obj = sessions.create("Foobar", null);
 
             // then
-            assertThat(obj).isEqualTo(simpleObject);
+            assertThat(obj).isEqualTo(session);
             assertThat(obj.getName()).isEqualTo("Foobar");
         }
 
@@ -85,17 +85,17 @@ public class SimpleObjectsTest {
         public void happyCase() throws Exception {
 
             // given
-            final List<SimpleObject> all = Lists.newArrayList();
+            final List<Session> all = Lists.newArrayList();
 
             context.checking(new Expectations() {
                 {
-                    oneOf(mockRepositoryService).allInstances(SimpleObject.class);
+                    oneOf(mockRepositoryService).allInstances(Session.class);
                     will(returnValue(all));
                 }
             });
 
             // when
-            final List<SimpleObject> list = simpleObjects.listAll();
+            final List<Session> list = sessions.listAll();
 
             // then
             assertThat(list).isEqualTo(all);

@@ -42,7 +42,7 @@ import lombok.Setter;
 @javax.jdo.annotations.PersistenceCapable(
         identityType=IdentityType.DATASTORE,
         schema = "simple",
-        table = "SimpleObject"
+        table = "Session"
 )
 @javax.jdo.annotations.DatastoreIdentity(
         strategy=javax.jdo.annotations.IdGeneratorStrategy.IDENTITY,
@@ -66,12 +66,19 @@ import lombok.Setter;
 @DomainObject(
         publishing = Publishing.ENABLED
 )
-public class SimpleObject implements Comparable<SimpleObject> {
+public class Session implements Comparable<Session> {
+
+    public enum State {
+        PROPOSED,
+        APPROVED,
+        DECLINED,
+        WITHDRAWN
+    }
 
     //region > title
 
-    public TranslatableString title() {
-        return TranslatableString.tr("Object: {name}", "name", getName());
+    public String title() {
+        return getName();
     }
 
     //endregion
@@ -80,7 +87,7 @@ public class SimpleObject implements Comparable<SimpleObject> {
 
     public static final int NAME_LENGTH = 40;
 
-    public static class NameDomainEvent extends PropertyDomainEvent<SimpleObject,String> {}
+    public static class NameDomainEvent extends PropertyDomainEvent<Session,String> {}
     @javax.jdo.annotations.Column(
             allowsNull="false",
             length = NAME_LENGTH
@@ -99,9 +106,19 @@ public class SimpleObject implements Comparable<SimpleObject> {
 
     //endregion
 
+    @Column(allowsNull = "false")
+    @Property()
+    @Getter @Setter
+    private Presenter presenter;
+
+    @Column(allowsNull = "false")
+    @Property()
+    @Getter @Setter
+    private State state;
+
     //region > updateName (action)
 
-    public static class UpdateNameDomainEvent extends ActionDomainEvent<SimpleObject> {}
+    public static class UpdateNameDomainEvent extends ActionDomainEvent<Session> {}
     @Action(
             command = CommandReification.ENABLED,
             publishing = Publishing.ENABLED,
@@ -109,7 +126,7 @@ public class SimpleObject implements Comparable<SimpleObject> {
             domainEvent = UpdateNameDomainEvent.class
     )
     @MemberOrder(name="name", sequence = "1") // associate with 'name' property
-    public SimpleObject updateName(@ParameterLayout(named="Name") final String name) {
+    public Session updateName(@ParameterLayout(named="Name") final String name) {
         setName(name);
         return this;
     }
@@ -124,7 +141,7 @@ public class SimpleObject implements Comparable<SimpleObject> {
 
     //region > delete (action)
 
-    public static class DeleteDomainEvent extends ActionDomainEvent<SimpleObject> {}
+    public static class DeleteDomainEvent extends ActionDomainEvent<Session> {}
     @Action(
             domainEvent = DeleteDomainEvent.class,
             semantics = SemanticsOf.NON_IDEMPOTENT_ARE_YOU_SURE
@@ -137,7 +154,7 @@ public class SimpleObject implements Comparable<SimpleObject> {
 
     //region > compareTo
     @Override
-    public int compareTo(final SimpleObject other) {
+    public int compareTo(final Session other) {
         return ObjectContracts.compare(this, other, "name");
     }
 

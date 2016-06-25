@@ -21,10 +21,10 @@ package domainapp.fixture.dom.simple;
 
 import org.apache.isis.applib.fixturescripts.FixtureScript;
 
-import domainapp.dom.simple.SimpleObject;
-import domainapp.dom.simple.SimpleObjects;
+import domainapp.dom.simple.Session;
+import domainapp.dom.simple.Sessions;
 
-public class SimpleObjectCreate extends FixtureScript {
+public class SessionCreate extends FixtureScript {
 
     //region > name (input)
     private String name;
@@ -35,7 +35,7 @@ public class SimpleObjectCreate extends FixtureScript {
         return name;
     }
 
-    public SimpleObjectCreate setName(final String name) {
+    public SessionCreate setName(final String name) {
         this.name = name;
         return this;
     }
@@ -43,14 +43,14 @@ public class SimpleObjectCreate extends FixtureScript {
 
 
     //region > simpleObject (output)
-    private SimpleObject simpleObject;
+    private Session session;
 
     /**
      * The created simple object (output).
      * @return
      */
-    public SimpleObject getSimpleObject() {
-        return simpleObject;
+    public Session getSession() {
+        return session;
     }
     //endregion
 
@@ -59,13 +59,13 @@ public class SimpleObjectCreate extends FixtureScript {
 
         String name = checkParam("name", ec, String.class);
 
-        this.simpleObject = wrap(simpleObjects).create(name);
+        this.session = wrap(sessions).create(name, null);
 
         // also make available to UI
-        ec.addResult(this, simpleObject);
+        ec.addResult(this, session);
     }
 
     @javax.inject.Inject
-    private SimpleObjects simpleObjects;
+    private Sessions sessions;
 
 }

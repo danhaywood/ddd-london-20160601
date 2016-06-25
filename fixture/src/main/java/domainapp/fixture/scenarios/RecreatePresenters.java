@@ -27,16 +27,16 @@ import com.google.common.collect.Lists;
 
 import org.apache.isis.applib.fixturescripts.FixtureScript;
 
-import domainapp.dom.simple.SimpleObject;
-import domainapp.fixture.dom.simple.SimpleObjectCreate;
+import domainapp.dom.simple.Session;
+import domainapp.fixture.dom.simple.PresenterCreate;
 import domainapp.fixture.dom.simple.SimpleObjectsTearDown;
 
-public class RecreateSimpleObjects extends FixtureScript {
+public class RecreatePresenters extends FixtureScript {
 
     public final List<String> NAMES = Collections.unmodifiableList(Arrays.asList(
             "Foo", "Bar", "Baz", "Frodo", "Froyo", "Fizz", "Bip", "Bop", "Bang", "Boo"));
 
-    public RecreateSimpleObjects() {
+    public RecreatePresenters() {
         withDiscoverability(Discoverability.DISCOVERABLE);
     }
 
@@ -50,20 +50,20 @@ public class RecreateSimpleObjects extends FixtureScript {
         return number;
     }
 
-    public RecreateSimpleObjects setNumber(final Integer number) {
+    public RecreatePresenters setNumber(final Integer number) {
         this.number = number;
         return this;
     }
     //endregion
 
     //region > simpleObjects (output)
-    private final List<SimpleObject> simpleObjects = Lists.newArrayList();
+    private final List<Session> sessions = Lists.newArrayList();
 
     /**
      * The simpleobjects created by this fixture (output).
      */
-    public List<SimpleObject> getSimpleObjects() {
-        return simpleObjects;
+    public List<Session> getSessions() {
+        return sessions;
     }
     //endregion
 
@@ -84,9 +84,9 @@ public class RecreateSimpleObjects extends FixtureScript {
         ec.executeChild(this, new SimpleObjectsTearDown());
 
         for (int i = 0; i < number; i++) {
-            final SimpleObjectCreate fs = new SimpleObjectCreate().setName(NAMES.get(i));
+            final PresenterCreate fs = new PresenterCreate().setName(NAMES.get(i));
             ec.executeChild(this, fs.getName(), fs);
-            simpleObjects.add(fs.getSimpleObject());
+            //sessions.add(fs.getPresenter());
         }
     }
 }

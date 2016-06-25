@@ -33,10 +33,10 @@ import org.junit.Test;
 import org.apache.isis.applib.fixturescripts.FixtureScript;
 import org.apache.isis.applib.fixturescripts.FixtureScripts;
 
-import domainapp.dom.simple.SimpleObject;
-import domainapp.dom.simple.SimpleObjects;
+import domainapp.dom.simple.Session;
+import domainapp.dom.simple.Sessions;
 import domainapp.fixture.dom.simple.SimpleObjectsTearDown;
-import domainapp.fixture.scenarios.RecreateSimpleObjects;
+import domainapp.fixture.scenarios.RecreatePresenters;
 import domainapp.integtests.tests.DomainAppIntegTest;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -45,7 +45,7 @@ public class SimpleObjectsIntegTest extends DomainAppIntegTest {
     @Inject
     FixtureScripts fixtureScripts;
     @Inject
-    SimpleObjects simpleObjects;
+    Sessions sessions;
 
     public static class ListAll extends SimpleObjectsIntegTest {
 
@@ -53,18 +53,18 @@ public class SimpleObjectsIntegTest extends DomainAppIntegTest {
         public void happyCase() throws Exception {
 
             // given
-            RecreateSimpleObjects fs = new RecreateSimpleObjects();
+            RecreatePresenters fs = new RecreatePresenters();
             fixtureScripts.runFixtureScript(fs, null);
             nextTransaction();
 
             // when
-            final List<SimpleObject> all = wrap(simpleObjects).listAll();
+            final List<Session> all = wrap(sessions).listAll();
 
             // then
-            assertThat(all).hasSize(fs.getSimpleObjects().size());
+            assertThat(all).hasSize(fs.getSessions().size());
 
-            SimpleObject simpleObject = wrap(all.get(0));
-            assertThat(simpleObject.getName()).isEqualTo(fs.getSimpleObjects().get(0).getName());
+            Session session = wrap(all.get(0));
+            assertThat(session.getName()).isEqualTo(fs.getSessions().get(0).getName());
         }
 
         @Test
@@ -76,7 +76,7 @@ public class SimpleObjectsIntegTest extends DomainAppIntegTest {
             nextTransaction();
 
             // when
-            final List<SimpleObject> all = wrap(simpleObjects).listAll();
+            final List<Session> all = wrap(sessions).listAll();
 
             // then
             assertThat(all).hasSize(0);
@@ -94,10 +94,10 @@ public class SimpleObjectsIntegTest extends DomainAppIntegTest {
             nextTransaction();
 
             // when
-            wrap(simpleObjects).create("Faz");
+            wrap(sessions).create("Faz", null);
 
             // then
-            final List<SimpleObject> all = wrap(simpleObjects).listAll();
+            final List<Session> all = wrap(sessions).listAll();
             assertThat(all).hasSize(1);
         }
 
@@ -108,14 +108,14 @@ public class SimpleObjectsIntegTest extends DomainAppIntegTest {
             FixtureScript fs = new SimpleObjectsTearDown();
             fixtureScripts.runFixtureScript(fs, null);
             nextTransaction();
-            wrap(simpleObjects).create("Faz");
+            wrap(sessions).create("Faz", null);
             nextTransaction();
 
             // then
             expectedExceptions.expectCause(causalChainContains(SQLIntegrityConstraintViolationException.class));
 
             // when
-            wrap(simpleObjects).create("Faz");
+            wrap(sessions).create("Faz", null);
             nextTransaction();
         }
 

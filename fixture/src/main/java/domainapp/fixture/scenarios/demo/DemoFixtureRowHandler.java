@@ -10,8 +10,8 @@ import org.apache.isis.applib.fixturescripts.FixtureScript;
 import org.isisaddons.module.excel.dom.ExcelFixture;
 import org.isisaddons.module.excel.dom.ExcelFixtureRowHandler;
 
-import domainapp.dom.simple.SimpleObject;
-import domainapp.dom.simple.SimpleObjects;
+import domainapp.dom.simple.Session;
+import domainapp.dom.simple.Sessions;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -26,15 +26,15 @@ public class DemoFixtureRowHandler implements ExcelFixtureRowHandler {
             final ExcelFixture excelFixture,
             final Object previousRow) {
 
-        final List<SimpleObject> matching = repository.findByName(name);
+        final List<Session> matching = repository.findByName(name);
         if(matching.isEmpty()) {
-            SimpleObject simpleObject = repository.create(name);
-            executionContext.addResult(excelFixture, simpleObject);
+            Session session = repository.create(name, null);
+            executionContext.addResult(excelFixture, session);
         }
         return Collections.emptyList();
     }
 
     @Inject
-    SimpleObjects repository;
+    Sessions repository;
 
 }
