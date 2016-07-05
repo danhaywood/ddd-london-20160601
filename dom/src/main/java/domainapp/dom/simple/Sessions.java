@@ -35,7 +35,7 @@ import org.apache.isis.applib.services.i18n.TranslatableString;
 import org.apache.isis.applib.services.repository.RepositoryService;
 
 @DomainService(
-        nature = NatureOfService.VIEW,
+        nature = NatureOfService.VIEW_MENU_ONLY,
         repositoryFor = Session.class
 )
 @DomainServiceLayout(
@@ -100,8 +100,8 @@ public class Sessions {
         session.setName(name);
         session.setState(Session.State.PROPOSED);
 
-        presenter.getSessions().add(session);
-        //session.setPresenter(presenter);
+        //presenter.getSessions().add(session);
+        session.setPresenter(presenter);
 
         repositoryService.persist(session);
         return session;
